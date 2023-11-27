@@ -5,7 +5,7 @@ import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import CTYAction from '../cty-action';
 import { formatHargaWithoutCurrency } from '../../shared/helper';
 
-const CardSalesList = ({ item, index, updateQuantity }) => {
+const CardSalesList = ({ item, index, updateQuantity, onDelete, onUpdate }) => {
   return (
     <View style={styles.ctnRoot}>
       <View style={styles.ctnItem}>
@@ -23,10 +23,10 @@ const CardSalesList = ({ item, index, updateQuantity }) => {
       <View style={styles.ctnAction}>
         <Text style={styles.txtItem}>Total</Text>
         <View style={styles.ctnRow}>
-        <TouchableOpacity style={styles.btnAction}>
+        <TouchableOpacity style={styles.btnAction} onPress={onUpdate}>
         <MaterialCommunityIcons name="pencil-outline" size={20} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnAction}>
+        <TouchableOpacity style={styles.btnAction} onPress={onDelete}>
         <Feather name="trash-2" size={20} color="black" />
         </TouchableOpacity>
         </View>

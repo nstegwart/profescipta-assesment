@@ -33,6 +33,7 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
       setListOrder(res)
     }catch(err){
       console.log("Err fetch:", err)
+      getNewToken()
     }
   }
 

@@ -8,17 +8,30 @@ import CardSalesList from '../../components/card-sales-list';
 import AddSalesItem from '../../components/add-sales-item';
 import ModalUpdateItem from '../../components/modal-update-item';
 import LoadingIndicator from '../../components/loading-indicator';
-import { getListItem } from '../../shared/request';
+import { createItem, deleteItem, getListItem, updateItem } from '../../shared/request';
+import ModalDelete from '../../components/modal-delete';
+import { generateRandomNumber, makeid } from '../../shared/helper';
 
-const DetailOrder = ({ navigation, userToken, defaultState, route }) => {
+const DetailOrder = ({ navigation, userState, defaultState, route }) => {
   const sales = route.params?.item || {}
   const [listItem, setListItem] = useState([])
   const [isLoading, setLoading] = useState(true)
+  const [showDeleteModal, setDeleteModal] = useState({
+    index: null,
+    visible: false,
+    item: null
+  })
+  const [modalItem, setModalItem] = useState({
+    item: null,
+    index: null,
+    visible: false,
+    type: null //add/edit
+  })
+  const getState = userState
 
-  console.log("CHECK defaultState", defaultState?.userState, listItem)
   useEffect(() => {
     getListItem({
-      state: '12345'
+      state: getState
     })
     .then(res => {
       setListItem(res)
@@ -28,6 +41,23 @@ const DetailOrder = ({ navigation, userToken, defaultState, route }) => {
     })
   }, [])
 
+  const handleShowAddItem = (index, item) => {
+    setModalItem({
+      item: item || null,
+      index: index === 0 || index ? index: null,
+      visible: true,
+      type: !!item ? 'update' : 'add'
+    })
+  }
+
+  const handleCloseModalAddItem = () => {
+    setModalItem({
+      item: null,
+      index: null,
+      visible: false,
+      type: null
+    })
+  }
 
   const updateQuantity = (index, amount) => {
     setListItem(prevList => {
@@ -35,8 +65,64 @@ const DetailOrder = ({ navigation, userToken, defaultState, route }) => {
       newList[index].Quantity += amount;
       return newList;
     });
+    updateItem(listItem[index],{state: getState})
   };
 
+  const removeItem = () => {
+    deleteItem(showDeleteModal.item, {state: getState})
+    setListItem((prevList) => {
+      const newList = [...prevList];
+      newList.splice(showDeleteModal.index, 1);
+      return newList;
+    });
+    
+    setDeleteModal({
+      index: null,
+      visible: false,
+      item: null
+    })
+  };
+
+  const closeModalDelete = () => {
+    setDeleteModal({
+      index: null,
+      visible: false
+    })
+  }
+
+
+  const addNewItem = (newItem) => {
+    createItem(newItem, {state: getState})
+    setListItem((prevList) => [...prevList, newItem]);
+    handleCloseModalAddItem()
+  };
+
+  const editItem = (index, updatedItem) => {
+    console.log("Check new item", updatedItem)
+    updateItem(updatedItem,{state: getState})
+    setListItem((prevList) => {
+      const newList = [...prevList];
+      newList[index] = updatedItem;
+      return newList;
+    });
+    handleCloseModalAddItem()
+  };
+
+  const handleSaveItem = (newItem) => {
+    if(modalItem.type === 'add'){
+      addNewItem({
+        ...newItem,
+        Price: Number(newItem.Price),
+        ItemId: generateRandomNumber(),
+        OrderId: generateRandomNumber(),
+      })
+    }
+    if(modalItem.type === 'update'){
+      editItem(modalItem.index, {...modalItem.item, ...{...newItem, Price: Number(newItem.Price)}})
+    }
+  }
+
+  console.log("Check modalItem.index", modalItem.index)
   const handleAddList = () => {
     Alert.alert("Mohon Maaf", "API dan design untuk fitur ini tidak tersedia")
   }
@@ -48,7 +134,7 @@ const DetailOrder = ({ navigation, userToken, defaultState, route }) => {
         <View style={styles.ctnHeader}>
           <View style={styles.ctnRowHeader}>
             <Text style={styles.txtTitleHeader}>Detail Sales</Text>
-            <TouchableOpacity style={styles.btnHeader}>
+            <TouchableOpacity style={styles.btnHeader} onPress={handleShowAddItem}>
               <Text style={styles.txtBtnHeader}>Add Item</Text>
             </TouchableOpacity>
           </View>
@@ -59,7 +145,20 @@ const DetailOrder = ({ navigation, userToken, defaultState, route }) => {
   }
 
   const renderItem = ({ item, index }) => {
-    return <CardSalesList updateQuantity={updateQuantity} index={index} item={item} />
+    return (
+      <CardSalesList
+        onUpdate={() => {handleShowAddItem(index, item)}}
+        updateQuantity={updateQuantity}
+        onDelete={() => {
+          setDeleteModal({
+            index: index,
+            visible: true,
+            item: item
+          })
+        }}
+        index={index}
+        item={item} />
+    )
   }
 
   const renderSummary = () => {
@@ -100,7 +199,7 @@ const DetailOrder = ({ navigation, userToken, defaultState, route }) => {
           ListHeaderComponent={renderHeader()}
           renderItem={renderItem}
           extraData={listItem}
-          keyExtractor={item => item.ItemId}
+          keyExtractor={item => item.ItemId.toString()}
           contentContainerStyle={styles.ctnScroll} 
           ListEmptyComponent={() => {
             if(isLoading){
@@ -116,13 +215,14 @@ const DetailOrder = ({ navigation, userToken, defaultState, route }) => {
       </View>
       {renderSummary()}
 
-      <ModalUpdateItem isVisible={false} />
+      <ModalUpdateItem modalItem={modalItem}  onClose={handleCloseModalAddItem} onSave={handleSaveItem} />
+      <ModalDelete isVisible={showDeleteModal.visible} onDelete={removeItem} onClose={closeModalDelete} />
     </View>
   );
 };
 
 const mapStateToProps = (states)  => ({
-  userToken: states.defaultState.userToken,
+  userState: states.defaultState.userState,
   defaultState: states.defaultState
 })
 
