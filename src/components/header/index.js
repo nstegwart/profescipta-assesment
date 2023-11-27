@@ -4,7 +4,7 @@ import styles from './styles';
 import constants from '../../shared/constants';
 import { Entypo } from '@expo/vector-icons';
 
-const Header = () => {
+const Header = ({ title }) => {
   return (
     <View style={styles.ctnRoot}>
       <View style={styles.ctnRow}>
@@ -15,7 +15,7 @@ const Header = () => {
       </View>
       <View style={styles.ctnTitle}>
         <Text style={styles.txtTitle}>
-          Sales Order List
+          {title || "Sales Order List"}
         </Text>
       </View>
     </View>

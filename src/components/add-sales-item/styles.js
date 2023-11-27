@@ -33,5 +33,12 @@ export default StyleSheet.create({
   },
   txtPlaceholder: {
     color: '#A69F9F'
+  },
+  ctnTextArea:{
+    height: 80
+  },
+  txtArea:{
+    textAlignVertical: 'top',
+    paddingVertical: 12
   }
 });

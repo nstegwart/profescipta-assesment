@@ -47,5 +47,8 @@ export default StyleSheet.create({
     color :'#fff',
     fontSize: 14,
     fontWeight: '500'
+  },
+  ctnScroll:{
+    paddingBottom: 20
   }
 });
