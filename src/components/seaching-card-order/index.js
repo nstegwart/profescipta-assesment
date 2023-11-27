@@ -1,17 +1,25 @@
-import React, { useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import styles from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const SearchingCardOrder = () => {
-  const [stateValue, setStateValue] = useState({
-    dateFilter: new Date(),
-    showModalDate: false,
-    keyword: '',
-    isHasChangedBefore: false
-  })
+const initState = {
+  dateFilter: new Date(),
+  keyword: '',
+  showModalDate: false,
+  isHasChangedBefore: false
+}
+const SearchingCardOrder = ({
+  handleFilterData
+}) => {
+  const [stateValue, setStateValue] = useState(initState)
+
+  useEffect(() => {
+    handleFilterData(stateValue)
+  }, [stateValue.keyword, stateValue.dateFilter, stateValue.isHasChangedBefore])
 
   const handleChangeValue = (stateName, value) => {
     setStateValue(prevState => ({
@@ -21,7 +29,12 @@ const SearchingCardOrder = () => {
   }
   return (
     <View style={styles.ctnRoot}>
+      <View style={styles.ctnRowTitle}>
       <Text style={styles.txtTitle}>Search</Text>
+      <TouchableOpacity onPress={() => {setStateValue(initState)}}>
+        <MaterialCommunityIcons name="restart" size={28} color="black" />
+      </TouchableOpacity>
+      </View>
       <View style={styles.ctnInput}>
         <TextInput value={stateValue.keyword} onChangeText={value => {handleChangeValue('keyword', value)}} style={styles.inputStyle} placeholderTextColor={'#A69F9F'} maxLength={40} placeholder='Keyword' />
       </View>

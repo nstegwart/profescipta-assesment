@@ -122,7 +122,6 @@ const DetailOrder = ({ navigation, userState, defaultState, route }) => {
     }
   }
 
-  console.log("Check modalItem.index", modalItem.index)
   const handleAddList = () => {
     Alert.alert("Mohon Maaf", "API dan design untuk fitur ini tidak tersedia")
   }
@@ -189,7 +188,6 @@ const DetailOrder = ({ navigation, userState, defaultState, route }) => {
   }
   
 
-  console.log("CHECK listItem", listItem)
   return (
     <View style={styles.ctnRoot}>
       <Header title="Sales Order Input" />

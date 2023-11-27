@@ -6,7 +6,6 @@ import { AntDesign } from '@expo/vector-icons';
 const CTYAction = ({
   onIncrease, onDecrease, quantity
 }) => {
-  console.log("CHECK quantity", quantity)
   return (
     <View style={styles.ctnRoot}>
       <TouchableOpacity style={styles.btnAction} onPress={onDecrease}>

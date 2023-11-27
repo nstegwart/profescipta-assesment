@@ -33,5 +33,10 @@ export default StyleSheet.create({
   },
   txtPlaceholder: {
     color: '#A69F9F'
+  },
+  ctnRowTitle:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   }
 });

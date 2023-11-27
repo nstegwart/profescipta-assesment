@@ -13,6 +13,11 @@ const ModalUpdateItem = ({ modalItem, onClose, onSave }) => {
     Price: '',
     Quantity: 1
   })
+  const [validationError, setValidationError] = useState({
+    itemName: '',
+    price: '',
+    quantity: ''
+  });
 
   useEffect(() => {
     if(modalItem.visible){
@@ -40,8 +45,43 @@ const ModalUpdateItem = ({ modalItem, onClose, onSave }) => {
       ...prevState,
       [stateName]: value
     }))
+    // Reset validation error on input change
+    setValidationError((prevError) => ({
+      ...prevError,
+      [stateName]: ''
+    }));
   }
 
+  const validateInputs = () => {
+    let isValid = true;
+    const errors = {
+      itemName: '',
+      price: '',
+      quantity: ''
+    };
+
+    if (!stateValue.ItemName.trim()) {
+      errors.itemName = 'Item Name is required';
+      isValid = false;
+    }
+
+    if (!stateValue.Price.trim()) {
+      errors.price = 'Price is required';
+      isValid = false;
+    } else if (isNaN(Number(stateValue.Price))) {
+      errors.price = 'Price must be a valid number';
+      isValid = false;
+    }
+
+    if (stateValue.Quantity <= 0) {
+      errors.quantity = 'Quantity must be greater than 0';
+      isValid = false;
+    }
+
+    setValidationError(errors);
+
+    return isValid;
+  };
 
   const handleIncreaseQuantity = () => {
     setStateValue((prevState) => ({
@@ -75,6 +115,9 @@ const ModalUpdateItem = ({ modalItem, onClose, onSave }) => {
             <View style={styles.ctnInput}>
               <TextInput value={stateValue.ItemName} autoFocus onChangeText={value => {handleChangeValue('ItemName', value)}} style={styles.inputStyle} placeholderTextColor={'#A69F9F'} maxLength={40} placeholder='Insert item name...' />
             </View>
+            {validationError.itemName !== '' && (
+              <Text style={styles.errorText}>{validationError.itemName}</Text>
+            )}
           </View>
 
           <View style={styles.inputWrapper}>
@@ -82,6 +125,10 @@ const ModalUpdateItem = ({ modalItem, onClose, onSave }) => {
             <View style={styles.ctnInput}>
               <TextInput value={stateValue.Price} onChangeText={value => {handleChangeValue('Price', onlyNumber(value))}} style={styles.inputStyle} placeholderTextColor={'#A69F9F'} maxLength={40} placeholder='Insert item price...' keyboardType='number-pad' />
             </View>
+            
+            {validationError.price !== '' && (
+              <Text style={styles.errorText}>{validationError.price}</Text>
+            )}
           </View>
           <View style={styles.ctnQty}>
             <Text style={[styles.txtLabel, styles.mgRight]}>QTY</Text>
@@ -90,6 +137,9 @@ const ModalUpdateItem = ({ modalItem, onClose, onSave }) => {
               onIncrease={handleIncreaseQuantity}
               onDecrease={handleDecreaseQuantity} />
           </View>
+            {validationError.quantity !== '' && (
+              <Text style={styles.errorText}>{validationError.quantity}</Text>
+            )}
           <View style={styles.ctnTotal}>
             <Text style={styles.txtTotal}>Total</Text>
             {!!stateValue.Price && !!stateValue.Quantity > 0 ? (
@@ -99,7 +149,14 @@ const ModalUpdateItem = ({ modalItem, onClose, onSave }) => {
             )}
           </View>
           <View style={styles.ctnRowButton}>
-            <TouchableOpacity style={[styles.btnHeader, styles.btnOval]} onPress={() => {onSave(stateValue)}}>
+            <TouchableOpacity
+              style={[styles.btnHeader, styles.btnOval]}
+              onPress={() => {
+                if (validateInputs()) {
+                  onSave(stateValue);
+                }
+              }}
+            >
               <Text style={styles.txtBtnHeader}>Save</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.btnHeader, styles.btnOval, styles.btnCancel]} onPress={onClose}>

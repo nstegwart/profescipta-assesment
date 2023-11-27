@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Text, FlatList, TouchableOpacity, View, Alert } from 'react-native';
 import qs from 'querystring';
 import styles from './styles';
@@ -9,9 +9,10 @@ import Header from '../../components/header';
 import SearchingCardOrder from '../../components/seaching-card-order';
 import CardOrderList from '../../components/card-order-list';
 import LoadingIndicator from '../../components/loading-indicator';
+import moment from 'moment';
 
 const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
-
+  const [listFilterData, setFilterData] = useState(listOrder)
 
   const getNewToken = () => {
     const body = qs.stringify({
@@ -53,10 +54,34 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
     Alert.alert("Mohon Maaf", "API dan design untuk fitur ini tidak tersedia")
   }
 
+
+  const filterData = (stateValue) => {
+    const filteredData = listOrder.filter(item => {
+      const formattedOrderDate = moment(item.OrderDate).format('YYYY-MM-DD');
+      const formattedFilterDate = moment(stateValue.dateFilter).format('YYYY-MM-DD');
+      const lowerCaseKeyword = stateValue.keyword.toLowerCase();
+  
+      return (
+        (lowerCaseKeyword.length === 0 || 
+          item.OrderNo.toLowerCase().includes(lowerCaseKeyword) ||
+          item.CustomerName.toLowerCase().includes(lowerCaseKeyword) ||
+          item.Address.toLowerCase().includes(lowerCaseKeyword) ||
+          item.ItemList.some(subItem => subItem.ItemName.toLowerCase().includes(lowerCaseKeyword))
+        ) &&
+        (!stateValue.isHasChangedBefore || formattedOrderDate === formattedFilterDate)
+      );
+    });
+  
+    setFilterData(filteredData);
+    
+    // Update the state or perform other actions with the filtered data
+    console.log('FILTER LIST ITEM DATA', stateValue.keyword, stateValue.dateFilter, filteredData);
+  };
+
   const renderHeader = () => {
     return (
       <Fragment>
-        <SearchingCardOrder />
+        <SearchingCardOrder handleFilterData={filterData} />
         <View style={styles.ctnHeader}>
           <View style={styles.ctnRowHeader}>
             <Text style={styles.txtTitleHeader}>Order List</Text>
@@ -74,20 +99,27 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
     return <CardOrderList item={item} />
   }
   
-  const listItem = []
-  listItem.length = 12
   return (
     <View style={styles.ctnRoot}>
       <Header title="Sales Order List" />
       <View style={styles.ctnContent}>
         <FlatList
           style={styles.ctnRoot}
-          data={listOrder}
+          data={listFilterData}
           ListHeaderComponent={renderHeader()}
           renderItem={renderItem}
           keyExtractor={item => item.OrderNo}
           contentContainerStyle={styles.ctnScroll}
-          ListEmptyComponent={() => <LoadingIndicator />} />
+          ListEmptyComponent={() => {
+            if(listOrder.length === 0){
+              return <LoadingIndicator />
+            }
+            return (
+              <View style={{ flex: 1, paddingVertical: 20 }}>
+                <Text style={{ fontSize: 20, color: '#000', textAlign: 'center' }}>No data</Text>
+                </View>
+            )
+          }} />
       </View>
     </View>
   );
