@@ -6,15 +6,15 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import ModalUpdateItem from '../modal-update-item';
 
-const AddSalesItem = () => {
+const AddSalesItem = ({ sales }) => {
   const [stateValue, setStateValue] = useState({
-    dateFilter: new Date(),
+    dateFilter: new Date(sales?.OrderDate),
     showModalDate: false,
-    keyword: '',
-    isHasChangedBefore: false,
-    isCustomerHasChanged: false,
-    customer: 'Gian',
-    address: ''
+    keyword: sales?.OrderNo || '',
+    isHasChangedBefore: !!sales?.OrderDate,
+    isCustomerHasChanged: !!sales?.CustomerName,
+    customer: sales?.CustomerName || 'Gian',
+    address: sales?.Address || ''
   })
 
   const handleChangeValue = (stateName, value) => {

@@ -26,7 +26,7 @@ export default StyleSheet.create({
     paddingHorizontal: 12
   },
   txtItem:{
-    fontSize: 16,
+    fontSize: 14,
     color: '#000',
     fontWeight: '500'
   }

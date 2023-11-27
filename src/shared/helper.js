@@ -8,3 +8,7 @@ export const makeid = (length) => {
     }
     return result;
   };
+
+  export const formatHargaWithoutCurrency = (number) => {
+   return number.toLocaleString('id-ID', { maximumFractionDigits: 0 });
+ }

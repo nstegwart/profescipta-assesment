@@ -8,7 +8,7 @@ export default StyleSheet.create({
     backgroundColor: '#D9D9D9',
     flexDirection: 'row',
     alignItems :'center',
-    minWidth: 70
+    minWidth: 80
   },
   btnAction:{
     width: 20,

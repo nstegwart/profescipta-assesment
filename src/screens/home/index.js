@@ -1,15 +1,17 @@
 import React, { Fragment, useEffect } from 'react';
-import { Text, FlatList, TouchableOpacity, View } from 'react-native';
+import { Text, FlatList, TouchableOpacity, View, Alert } from 'react-native';
 import qs from 'querystring';
 import styles from './styles';
 import { getOrderList, getUserToken } from '../../shared/request';
 import { connect } from 'react-redux';
-import { setTokenUser } from '../../reducers/states/default-state/actions';
+import { setListOrder, setTokenUser } from '../../reducers/states/default-state/actions';
 import Header from '../../components/header';
 import SearchingCardOrder from '../../components/seaching-card-order';
 import CardOrderList from '../../components/card-order-list';
+import LoadingIndicator from '../../components/loading-indicator';
 
-const HomePage = ({ navigation, userToken, defaultState }) => {
+const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
+
 
   const getNewToken = () => {
     const body = qs.stringify({
@@ -19,7 +21,6 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
     })
     const headers = { 'content-type': 'application/x-www-form-urlencoded' }
     getUserToken(body, headers).then((res) => {
-      console.log("Check response token", res)
       setTokenUser(res.access_token)
     }).catch(err => {
       console.log("Error response token", err)
@@ -29,7 +30,7 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
   const fetchData = async() => {
     try{
       const res = await getOrderList()
-      console.log("Check res data", res)
+      setListOrder(res)
     }catch(err){
       console.log("Err fetch:", err)
     }
@@ -47,6 +48,10 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
     }
   }, [userToken])
 
+  const handleAddList = () => {
+    Alert.alert("Mohon Maaf", "API dan design untuk fitur ini tidak tersedia")
+  }
+
   const renderHeader = () => {
     return (
       <Fragment>
@@ -56,7 +61,7 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
             <Text style={styles.txtTitleHeader}>Order List</Text>
             <Text style={styles.txtTotalItems}>Total Items: 50</Text>
           </View>
-          <TouchableOpacity style={styles.btnHeader}>
+          <TouchableOpacity style={styles.btnHeader} onPress={handleAddList}>
             <Text style={styles.txtBtnHeader}>Add</Text>
           </TouchableOpacity>
         </View>
@@ -65,7 +70,7 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
   }
 
   const renderItem = ({ item }) => {
-    return <CardOrderList />
+    return <CardOrderList item={item} />
   }
   
   const listItem = []
@@ -75,11 +80,13 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
       <Header title="Sales Order List" />
       <View style={styles.ctnContent}>
         <FlatList
-          data={listItem}
+          style={styles.ctnRoot}
+          data={listOrder}
           ListHeaderComponent={renderHeader()}
           renderItem={renderItem}
-          keyExtractor={item => item}
-          contentContainerStyle={styles.ctnScroll} />
+          keyExtractor={item => item.OrderNo}
+          contentContainerStyle={styles.ctnScroll}
+          ListEmptyComponent={() => <LoadingIndicator />} />
       </View>
     </View>
   );
@@ -87,7 +94,8 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
 
 const mapStateToProps = (states)  => ({
   userToken: states.defaultState.userToken,
-  defaultState: states.defaultState
+  listOrder: states.defaultState.listOrder,
+  defaultState: states.defaultState,
 })
 
 export default connect(mapStateToProps)(HomePage);

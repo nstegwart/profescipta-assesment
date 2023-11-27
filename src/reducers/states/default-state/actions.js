@@ -11,11 +11,13 @@ export const setTokenUser = (payload) => {
 export const setListOrder = (payload) => {
     store.dispatch({
         type: types.SET_LIST_ORDER,
+        payload
     })
 }
 
 export const setListItem = (payload) => {
     store.dispatch({
         type: types.SET_LIST_ITEM,
+        payload
     })
 }

@@ -7,10 +7,11 @@ export const getOrderList = () =>{
   });
 }
 
-export const getListItem = () =>{
+export const getListItem = (customHeaders) =>{
   return Wrap({
     url: '/so-api/Order/GetItems',
-    method: 'GET'
+    method: 'GET',
+    customHeaders
   });
 }
 
@@ -22,3 +23,33 @@ export const getUserToken = (data, customHeaders) =>{
     customHeaders
   });
 }
+
+
+export const createItem = (data, customHeaders) =>{
+  return Wrap({
+    url: '/so-api/Order/CreateItem',
+    method: 'POST',
+    data,
+    customHeaders
+  });
+}
+
+export const updateItem = (data, customHeaders) =>{
+  return Wrap({
+    url: '/so-api/Order/UpdateItem',
+    method: 'POST',
+    data,
+    customHeaders
+  });
+}
+
+
+export const deleteItem = (data, customHeaders) =>{
+  return Wrap({
+    url: '/so-api/Order/DeleteItem',
+    method: 'POST',
+    data,
+    customHeaders
+  });
+}
+

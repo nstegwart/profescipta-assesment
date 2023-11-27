@@ -10,7 +10,9 @@ export default StyleSheet.create({
     backgroundColor: '#EEEEEE',
     marginTop :-20,
     borderTopLeftRadius: 20,
-    borderTopRightRadius: 20
+    borderTopRightRadius: 20,
+    flex: 1,
+    overflow: 'hidden'
   },
   ctnHeader:{
     marginHorizontal: 20,
@@ -49,6 +51,6 @@ export default StyleSheet.create({
     fontWeight: '500'
   },
   ctnScroll:{
-    paddingBottom: 20
+    paddingBottom: 90,
   }
 });
