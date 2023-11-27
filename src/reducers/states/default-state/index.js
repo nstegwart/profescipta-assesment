@@ -1,9 +1,11 @@
+import { makeid } from '../../../shared/helper';
 import * as types from './types'
 
 const initialState = {
     listOrder: [],
     listItem: [],
-    userToken: null
+    userToken: null,
+    userState: null
 }
 
 const defaultState = (state = initialState, action) => {
@@ -21,7 +23,8 @@ const defaultState = (state = initialState, action) => {
       case types.SET_USER_TOKEN:
         return {
             ...state,
-            userToken: action.payload
+            userToken: action.payload,
+            userState: makeid(5)
         }
       default:
         return state;
