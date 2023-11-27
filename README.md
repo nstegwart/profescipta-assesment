@@ -1,4 +1,3 @@
-Tentu, berikut adalah contoh `README.md` yang sederhana untuk memberi petunjuk cara mengklon repository, menginstal modul dengan Yarn, dan menjalankan aplikasi di Android:
 
 ```markdown
 # Gian Technical Test - Profescipta
