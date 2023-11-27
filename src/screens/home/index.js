@@ -50,6 +50,10 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
     }
   }, [userToken])
 
+  useEffect(() => {
+    setFilterData(listOrder)
+  }, [listOrder])
+
   const handleAddList = () => {
     Alert.alert("Mohon Maaf", "API dan design untuk fitur ini tidak tersedia")
   }
@@ -74,8 +78,6 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
   
     setFilterData(filteredData);
     
-    // Update the state or perform other actions with the filtered data
-    console.log('FILTER LIST ITEM DATA', stateValue.keyword, stateValue.dateFilter, filteredData);
   };
 
   const renderHeader = () => {
@@ -85,7 +87,7 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
         <View style={styles.ctnHeader}>
           <View style={styles.ctnRowHeader}>
             <Text style={styles.txtTitleHeader}>Order List</Text>
-            <Text style={styles.txtTotalItems}>Total Items: 50</Text>
+            <Text style={styles.txtTotalItems}>Total Items: {listOrder?.length || 0}</Text>
           </View>
           <TouchableOpacity style={styles.btnHeader} onPress={handleAddList}>
             <Text style={styles.txtBtnHeader}>Add</Text>
@@ -98,6 +100,7 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
   const renderItem = ({ item }) => {
     return <CardOrderList item={item} />
   }
+
   
   return (
     <View style={styles.ctnRoot}>
@@ -106,6 +109,7 @@ const HomePage = ({ navigation, userToken, defaultState, listOrder }) => {
         <FlatList
           style={styles.ctnRoot}
           data={listFilterData}
+          extraData={[listFilterData, listOrder]}
           ListHeaderComponent={renderHeader()}
           renderItem={renderItem}
           keyExtractor={item => item.OrderNo}
