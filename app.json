@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "profescipt-assesment",
+    "slug": "profescipt-assesment",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
