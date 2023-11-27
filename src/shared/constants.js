@@ -9,7 +9,8 @@ const DUMMY_AVATAR = 'https://i.pinimg.com/736x/9c/a3/21/9ca3216bbd236709102fcf3
 
 const constants = {
     colors,
-    API_URL
+    API_URL,
+    DUMMY_AVATAR
 }
 
 export default constants

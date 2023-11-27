@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
-import { Button, View } from 'react-native';
+import { Text, FlatList, TouchableOpacity, View } from 'react-native';
 import qs from 'querystring';
 import styles from './styles';
 import { getOrderList, getUserToken } from '../../shared/request';
 import { connect } from 'react-redux';
 import { setTokenUser } from '../../reducers/states/default-state/actions';
 import { AntDesign } from '@expo/vector-icons'; 
+import Header from '../../components/header';
+import SearchingCardOrder from '../../components/seaching-card-order';
+import CardOrderList from '../../components/card-order-list';
 
 const HomePage = ({ navigation, userToken, defaultState }) => {
 
@@ -45,13 +48,36 @@ const HomePage = ({ navigation, userToken, defaultState }) => {
       fetchData()
     }
   }, [userToken])
+
+  const renderHeader = () => {
+    return (
+      <View style={styles.ctnHeader}>
+        <View style={styles.ctnRowHeader}>
+          <Text style={styles.txtTitleHeader}>Order List</Text>
+          <Text style={styles.txtTotalItems}>Total Items: 50</Text>
+        </View>
+        <TouchableOpacity style={styles.btnHeader}>
+          <Text style={styles.txtBtnHeader}>Add</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  const renderItem = ({ item }) => {
+    return <CardOrderList />
+  }
   
   return (
     <View style={styles.ctnRoot}>
-      {/* meowmeow */}
-      {/* meowmeow */}
-      <Button title='DIRECT' onPress={() => {navigation.navigate('DetailOrder')}} />
-      <AntDesign name="stepforward" size={24} color="black" />
+      <Header title="Sales Order List" />
+      <View style={styles.ctnContent}>
+        <SearchingCardOrder />
+        <FlatList
+          data={['a','b']}
+          ListHeaderComponent={renderHeader()}
+          renderItem={renderItem}
+          keyExtractor={item => item.OrderNo} />
+      </View>
     </View>
   );
 };
